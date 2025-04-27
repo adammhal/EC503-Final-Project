@@ -1,2 +1,2 @@
-# EC503 Final Project
- Final project for EC503 BU
+# EC504 Final Project
+Final project for EC504 BU
