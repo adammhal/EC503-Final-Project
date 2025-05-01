@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RB-Tree Visualizer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <h1>Red-Black Tree Visualizer</h1>
+  </header>
+
+  <section id="controls">
+    <input type="number" id="insert-input" placeholder="Key">
+    <button id="btn-insert">Insert</button>
+    <input type="number" id="delete-input" placeholder="Key">
+    <button id="btn-delete">Delete</button>
+    <input type="number" id="find-input" placeholder="Key">
+    <button id="btn-find">Find</button>
+    <button id="btn-print">Print</button>
+    <label><input type="checkbox" id="chk-null"> Show Null Leaves</label>
+  </section>
+
+  <section id="visualization">
+    <svg id="tree-svg" width="100%" height="400"></svg>
+  </section>
+
+  <section id="output">
+    <!-- Print output goes here -->
+  </section>
+
+  <footer>
+    <p>Demo</p>
+  </footer>
+
+  <script src="js/redBlackTree.js"></script>
+  <script src="js/drawTree.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
