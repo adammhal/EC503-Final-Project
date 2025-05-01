@@ -8,7 +8,9 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
 public class RedBlackTreeServer {
-
+    
+    private static final RedBlackTree<Integer> tree = new RedBlackTree<>();
+    
     public static void main(String[] args) { 
 
       
