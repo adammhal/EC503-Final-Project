@@ -1,3 +1,4 @@
+%% This server listens to localhost:8080/tree and supports the front end to send insert=10, delete=20, search=15 through POST requests.
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
