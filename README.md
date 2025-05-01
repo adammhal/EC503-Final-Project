@@ -1,3 +1,5 @@
+# Final Project for EC504 BU
+
 1. **Prepare Your Own Device To Receive A Laptop**
 ```bash
 ssh -L 9000:localhost:9000 -L 4000:localhost:4000 USERNAME@scc1.bu.edu
