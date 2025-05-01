@@ -1,69 +1,68 @@
-// js/main.js
 document.addEventListener("DOMContentLoaded", () => {
-  const insInput  = document.getElementById("insert-input");
-  const btnIns    = document.getElementById("btn-insert");
+  const ins   = document.getElementById("insert-input");
+  const del   = document.getElementById("delete-input");
+  const find  = document.getElementById("find-input");
 
-  const delInput  = document.getElementById("delete-input");
-  const btnDel    = document.getElementById("btn-delete");
+  const btnIns   = document.getElementById("btn-insert");
+  const btnDel   = document.getElementById("btn-delete");
+  const btnFind  = document.getElementById("btn-find");
+  const btnPrint = document.getElementById("btn-print");
 
-  const findInput = document.getElementById("find-input");
-  const btnFind   = document.getElementById("btn-find");
+  const viz  = document.getElementById("visualization");
+  const out  = document.getElementById("output");
+  const chkNull = document.getElementById("chk-null");
 
-  const btnPrint  = document.getElementById("btn-print");
-  const chkNull   = document.getElementById("chk-null");
-
-  const viz       = document.getElementById("visualization");
-  const out       = document.getElementById("output");
-
-  const tree = new RBTree();
-
-  // single render function
-  function render() {
-    drawTree(viz, tree.toJSON(), chkNull.checked);
+  async function fetchTree(url) {
+    const r = await fetch(url);
+    if (!r.ok) { out.textContent = "Server error"; return null; }
+    return (await r.json());
   }
 
-  // INITIAL DRAW
-  render();
+  async function refresh(treeJson) {
+    drawTree(viz, treeJson);                
+  }
 
-  // INSERT
-  btnIns.addEventListener("click", () => {
-    const k = Number(insInput.value);
-    tree.insert(k);
-    render();
-  });
+  async function postTree(cmd, value) {
+    const res = await fetch('http://localhost:8080/tree', {
+      method : 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body   : `${cmd}=${value}`   // "insert=20", "delete=5", …
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();             // tree JSON or {"found":true}
+  }
 
-  // DELETE
-  btnDel.addEventListener("click", () => {
-    const k = Number(delInput.value);
-    tree.delete(k);
-    render();
-  });
+  const api = async (cmd, val) =>
+    (await fetch('http://localhost:8080/tree', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: `${cmd}=${val}`,
+  })).json();
 
-  // FIND
-  btnFind.addEventListener("click", () => {
-    const k = Number(findInput.value);
-    const node = tree.search(k);
-    if (node) {
-      out.textContent = `Found key ${k}`;
-      // Optionally: highlight node by extending drawTree
-    } else {
-      out.textContent = `Key ${k} not found`;
-    }
-    render();
-  });
+  
+  btnIns.onclick = async () => {
+    const v = +document.getElementById('insert-input').value;
+    drawTree(viz, await api('insert', v));
+  };
 
-  // PRINT (in-order)
-  btnPrint.addEventListener("click", () => {
-    const result = [];
-    (function inorder(n) {
-      if (!n) return;
-      inorder(n.left);
-      result.push(n.key);
-      inorder(n.right);
-    })(tree.root === tree.nullLeaf ? null : tree.root);
-    out.textContent = "In-order: " + result.join(", ");
-  });
+  btnDel.onclick = async () => {
+    const v = +document.getElementById('delete-input').value;
+    drawTree(viz, await api('delete', v));
+  };
 
-  // TOGGLE NULL LEAVES
-  chkNull.addEventListener("change", render);
+  btnFind.onclick = async () => {
+    const v   = +document.getElementById('find-input').value;
+    const res = await api('search', v);
+    alert(res.found ? `${v} is in the tree` : `${v} not found`);
+  };
+
+  btnPrint.onclick = async () => {
+    const json = await fetchTree("http://localhost:8080/tree");
+    if (!json) return;
+    const inorder = [];
+    (function dfs(n){ if(!n) return; dfs(n.left); inorder.push(n.key); dfs(n.right); })(json);
+    out.textContent = inorder.join(", ");
+  };
+
+  refresh(null);
 });

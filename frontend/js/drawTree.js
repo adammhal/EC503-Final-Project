@@ -1,6 +1,8 @@
 // js/drawTree.js
 
 function drawTree(_, treeJSON) {
+  console.log('drawTree got:', JSON.stringify(treeJSON, null, 2));
+
   const svg = document.getElementById('tree-svg');
   // clear
   while (svg.firstChild) svg.removeChild(svg.firstChild);

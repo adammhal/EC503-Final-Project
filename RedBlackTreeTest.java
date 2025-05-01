@@ -1,82 +1,82 @@
-
 import java.util.*;
 
 public class RedBlackTreeTest {
 
     public static void main(String[] args) {
-        RedBlackTree<Integer> myTree = new RedBlackTree<>();
-        TreeSet<Integer> refTree = new TreeSet<>();
+        RedBlackTree<Integer> t = new RedBlackTree<>();
+        TreeSet<Integer> ref = new TreeSet<>();
         int[] vals = {10, 20, 30, 15, 25, 5, 17, 3, 8};
         for (int v : vals) {
-            myTree.insert(v);
-            refTree.add(v);
-            if (!myTree.toList().equals(new ArrayList<>(refTree))) {
-                throw new AssertionError("Mismatch");
+            t.insert(v);
+            ref.add(v);
+            if (!t.toList().equals(new ArrayList<>(ref))) {
+                throw new AssertionError("insert mismatch");
             }
-            assert rbOk(myTree);
+            assert rbOk(t);
         }
-        assert myTree.contains(15) && refTree.contains(15);
-        assert !myTree.contains(99) && !refTree.contains(99);
-        System.out.println("All tests passed. Final inorder list: " + refTree);
-        System.out.println("JSON dump: " + myTree.toJson());
+        int[] dels = {20, 5, 10};
+        for (int d : dels) {
+            t.delete(d);
+            ref.remove(d);
+            if (!t.toList().equals(new ArrayList<>(ref))) {
+                throw new AssertionError("delete mismatch");
+            }
+            assert rbOk(t);
+        }
+        assert t.contains(15) && ref.contains(15);
+        assert !t.contains(99) && !ref.contains(99);
+        System.out.println("All tests passed. Final inorder list: " + ref);
+        System.out.println(t.toJson());
     }
 
     private static boolean rbOk(RedBlackTree<Integer> t) {
-        return blackHeight(t.toJson()) != -1;
+        return bh(t.toJson()) != -1;
     }
 
-    private static int blackHeight(String json) {
-        if (json == null || json.equals("null")) {
+    private static int bh(String j) {
+        if (j == null || j.equals("null")) {
             return 1;
         }
-        boolean isRed = json.contains("\"color\":\"red\"");
-        int leftIdx = json.indexOf("\"left\":");
-        int rightIdx = json.indexOf("\"right\":");
-        String leftJson = "null", rightJson = "null";
-        if (leftIdx != -1) {
-            int start = json.indexOf('{', leftIdx);
-            if (start != -1) {
-                int cut = findMatching(json, start);
-                leftJson = json.substring(start, cut + 1);
-            }
-        }
-        if (rightIdx != -1) {
-            int start = json.indexOf('{', rightIdx);
-            if (start != -1) {
-                int cut = findMatching(json, start);
-                rightJson = json.substring(start, cut + 1);
-            }
-        }
-        if (isRed) {
-            if (leftJson.contains("\"color\":\"red\"") || rightJson.contains("\"color\":\"red\"")) {
-                return -1;
-            }
-        }
-        int leftBlack = blackHeight(leftJson);
-        int rightBlack = blackHeight(rightJson);
-        if (leftBlack == -1 || rightBlack == -1 || leftBlack != rightBlack) {
+        boolean red = j.contains("\"color\":\"red\"");
+        int li = j.indexOf("\"left\":");
+        int ri = j.indexOf("\"right\":");
+        String l = "null", r = "null";
+        if (li != -1) {
+            int s = j.indexOf('{', li);
+            if (s != -1) {
+                l = j.substring(s, match(j, s) + 1);
+        
+            }}
+        if (ri != -1) {
+            int s = j.indexOf('{', ri);
+            if (s != -1) {
+                r = j.substring(s, match(j, s) + 1);
+        
+            }}
+        if (red && (l.contains("red") || r.contains("red"))) {
             return -1;
         }
-        return isRed ? leftBlack : leftBlack + 1;
+        int lb = bh(l), rb = bh(r);
+        if (lb == -1 || rb == -1 || lb != rb) {
+            return -1;
+        }
+        return red ? lb : lb + 1;
     }
 
-    private static int findMatching(String s, int pos) {
-        if (pos == -1) {
-            return -1;
-        }
-        int depth = 0;
-        for (int i = pos; i < s.length(); i++) {
+    private static int match(String s, int p) {
+        int d = 0;
+        for (int i = p; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c == '{') {
-                depth++;
-            }
-            if (c == '}') {
-                depth--;
-            }
-            if (depth == 0) {
+                d++;
+            
+            }if (c == '}') {
+                d--;
+            
+            }if (d == 0) {
                 return i;
-            }
-        }
+        
+            }}
         return s.length() - 1;
     }
 }
