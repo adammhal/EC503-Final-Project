@@ -1,4 +1,5 @@
-%% This server listens to localhost:8080/tree and supports the front end to send insert=10, delete=20, search=15 through POST requests.
+// This server listens to localhost:8080/tree and supports the front end to send insert=10, delete=20, search=15 through POST requests.
+
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -9,8 +10,10 @@ import java.nio.charset.StandardCharsets;
 
 public class RedBlackTreeServer {
 
+    // make sure only one redblacktree exsis
     private static final RedBlackTree<Integer> tree = new RedBlackTree<>();
 
+    // main function to start server
     public static void main(String[] args) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
         server.createContext("/tree", new TreeHandler());
@@ -19,6 +22,9 @@ public class RedBlackTreeServer {
         System.out.println("Server started at http://localhost:8080/tree");
     }
 
+
+
+    // read instructions from front-end
     static class TreeHandler implements HttpHandler {
         public void handle(HttpExchange exchange) throws IOException {
             if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
