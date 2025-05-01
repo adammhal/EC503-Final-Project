@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!json) return;
     const inorder = [];
     (function dfs(n){ if(!n) return; dfs(n.left); inorder.push(n.key); dfs(n.right); })(json);
-    out.textContent = inorder.join(", ");
+    out.textContent = "In Order Traversal: " + inorder.join(", ");
   };
 
   refresh(null);
